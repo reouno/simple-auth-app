@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api_server/api_server.iml" filepath="$PROJECT_DIR$/api_server/api_server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/espv2/espv2.iml" filepath="$PROJECT_DIR$/espv2/espv2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/front/front.iml" filepath="$PROJECT_DIR$/front/front.iml" />
     </modules>
   </component>
 </project>

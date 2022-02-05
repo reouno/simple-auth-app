@@ -1,0 +1,8 @@
+host: espv2-simple-auth-app-dev-4r4bp3qvaq-an.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://simple-auth-app-4r4bp3qvaq-an.a.run.app
+  protocol: h2

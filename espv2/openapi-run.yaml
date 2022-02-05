@@ -1,0 +1,429 @@
+swagger: '2.0'
+info:
+  description: Sample API on Cloud Endpoints with a Cloud Run backend
+  title: Cloud Endpoints (ESPv2) + Cloud Run
+  version: 1.0.0
+host: espv2-simple-auth-app-dev-4r4bp3qvaq-an.a.run.app
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://simple-auth-app-4r4bp3qvaq-an.a.run.app
+  protocol: h2
+paths:
+  /api/custom_accounts/current:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      security:
+        - jwtAuth: []
+      tags:
+        - custom_accounts
+      description: Get information of the current user
+      operationId: custom_accounts_current_retrieve
+    patch:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/PatchedUser'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      security:
+        - jwtAuth: []
+      tags:
+        - custom_accounts
+      description: Get information of the current user
+      operationId: custom_accounts_current_partial_update
+    put:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      security:
+        - jwtAuth: []
+      tags:
+        - custom_accounts
+      description: Get information of the current user
+      operationId: custom_accounts_current_update
+  /api/custom_accounts/hello:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Message'
+      security:
+        - jwtAuth: []
+        - {}
+      tags:
+        - custom_accounts
+      description: Just return Hello.
+      operationId: custom_accounts_hello_retrieve
+  /api/custom_accounts/login:
+    post:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/NativeLogin'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      security:
+        - jwtAuth: []
+        - {}
+      tags:
+        - custom_accounts
+      description: Login.
+      operationId: custom_accounts_login_create
+  /api/custom_accounts/logout:
+    post:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Message'
+      security:
+        - jwtAuth: []
+      tags:
+        - custom_accounts
+      description: Logout from current session.
+      operationId: custom_accounts_logout_create
+  /api/custom_accounts/set-csrf:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Message'
+      security:
+        - jwtAuth: []
+        - {}
+      tags:
+        - custom_accounts
+      description: Set-CSRF view
+      operationId: custom_accounts_set_csrf_retrieve
+  /api/token:
+    post:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenObtainPair'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenObtainPair'
+      tags:
+        - token
+      description: >-
+        Takes a set of user credentials and returns an access and refresh JSON
+        web
+
+        token pair to prove the authentication of those credentials.
+      operationId: token_create
+  /api/token/refresh:
+    post:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      tags:
+        - token
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      operationId: token_refresh_create
+  /api/token/verify:
+    post:
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenVerify'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenVerify'
+      tags:
+        - token
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      operationId: token_verify_create
+definitions:
+  Message:
+    description: Message serializer
+    properties:
+      message:
+        type: string
+    required:
+      - message
+    type: object
+  NativeLogin:
+    description: Login serializer
+    properties:
+      email:
+        format: email
+        type: string
+      password:
+        type: string
+    required:
+      - email
+      - password
+    type: object
+  PatchedUser:
+    description: User serializer
+    properties:
+      birthday:
+        format: date
+        type: string
+        x-nullable: true
+      date_joined:
+        format: date-time
+        type: string
+      email:
+        format: email
+        maxLength: 254
+        title: Email address
+        type: string
+        x-nullable: true
+      first_name:
+        maxLength: 64
+        type: string
+      gender:
+        type: string
+        x-nullable: true
+      groups:
+        description: >-
+          The groups this user belongs to. A user will get all permissions
+          granted to each of their groups.
+        items:
+          type: integer
+        type: array
+      is_active:
+        description: >-
+          Designates whether this user should be treated as active. Unselect
+          this instead of deleting accounts.
+        title: Active
+        type: boolean
+      is_staff:
+        description: Designates whether the user can log into this admin site.
+        title: Staff status
+        type: boolean
+      is_superuser:
+        description: >-
+          Designates that this user has all permissions without explicitly
+          assigning them.
+        title: Superuser status
+        type: boolean
+      last_login:
+        format: date-time
+        type: string
+        x-nullable: true
+      last_name:
+        maxLength: 64
+        type: string
+      user_id:
+        maxLength: 320
+        title: Visible user id
+        type: string
+      user_permissions:
+        description: Specific permissions for this user.
+        items:
+          type: integer
+        type: array
+      uuid:
+        format: uuid
+        readOnly: true
+        type: string
+    type: object
+  TokenObtainPair:
+    properties:
+      access:
+        readOnly: true
+        type: string
+      password:
+        type: string
+      refresh:
+        readOnly: true
+        type: string
+      user_id:
+        type: string
+    required:
+      - access
+      - password
+      - refresh
+      - user_id
+    type: object
+  TokenRefresh:
+    properties:
+      access:
+        readOnly: true
+        type: string
+      refresh:
+        type: string
+    required:
+      - access
+      - refresh
+    type: object
+  TokenVerify:
+    properties:
+      token:
+        type: string
+    required:
+      - token
+    type: object
+  User:
+    description: User serializer
+    properties:
+      birthday:
+        format: date
+        type: string
+        x-nullable: true
+      date_joined:
+        format: date-time
+        type: string
+      email:
+        format: email
+        maxLength: 254
+        title: Email address
+        type: string
+        x-nullable: true
+      first_name:
+        maxLength: 64
+        type: string
+      gender:
+        type: string
+        x-nullable: true
+      groups:
+        description: >-
+          The groups this user belongs to. A user will get all permissions
+          granted to each of their groups.
+        items:
+          type: integer
+        type: array
+      is_active:
+        description: >-
+          Designates whether this user should be treated as active. Unselect
+          this instead of deleting accounts.
+        title: Active
+        type: boolean
+      is_staff:
+        description: Designates whether the user can log into this admin site.
+        title: Staff status
+        type: boolean
+      is_superuser:
+        description: >-
+          Designates that this user has all permissions without explicitly
+          assigning them.
+        title: Superuser status
+        type: boolean
+      last_login:
+        format: date-time
+        type: string
+        x-nullable: true
+      last_name:
+        maxLength: 64
+        type: string
+      user_id:
+        maxLength: 320
+        title: Visible user id
+        type: string
+      user_permissions:
+        description: Specific permissions for this user.
+        items:
+          type: integer
+        type: array
+      uuid:
+        format: uuid
+        readOnly: true
+        type: string
+    required:
+      - user_id
+      - uuid
+    type: object
+securityDefinitions:
+  jwtAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+x-components: {}
+
