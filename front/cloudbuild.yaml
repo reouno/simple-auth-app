@@ -1,0 +1,33 @@
+steps:
+  - id: "build image"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      - build
+      - "-t"
+      - "gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"
+      - "--build-arg"
+      - "BASE_URL=${_NUXT_ENV_BASE_URL}"
+      - .
+
+  - id: "push image"
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"]
+
+  # - id: "deploy"
+  #   name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  #   entrypoint: gcloud
+  #   args:
+  #     - run
+  #     - deploy
+  #     - $_SERVICE_NAME
+  #     - "--platform=managed"
+  #     - "--image=gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"
+  #     - "--region=$_REGION"
+
+substitutions:
+  _PROJECT_ID: simple-auth-app-dev
+  _SERVICE_NAME: front-simple-auth-app-dev
+  _NUXT_ENV_BASE_URL: http://localhost:8000
+
+images:
+  - "gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"
