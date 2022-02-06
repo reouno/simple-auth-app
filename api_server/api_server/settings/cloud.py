@@ -52,7 +52,6 @@ STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 GS_DEFAULT_ACL = "publicRead"
 
 SIMPLE_JWT = {
-    'AUTH_HEADER_NAME': 'HTTP_X_FORWARDED_AUTHORIZATION',
     'USER_ID_FIELD': 'user_id',
     'USER_ID_CLAIM': 'user_id',
 }
