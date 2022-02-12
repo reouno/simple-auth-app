@@ -7,6 +7,8 @@ steps:
       - "gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"
       - "--build-arg"
       - "BASE_URL=${_NUXT_ENV_BASE_URL}"
+      - "--build-arg"
+      - "HOST_URL=${_NUXT_ENV_HOST_URL}"
       - .
 
   - id: "push image"
@@ -28,6 +30,7 @@ substitutions:
   _PROJECT_ID: simple-auth-app-dev
   _SERVICE_NAME: front-simple-auth-app-dev
   _NUXT_ENV_BASE_URL: http://localhost:8000
+  _NUXT_ENV_HOST_URL: http://localhost:3000
 
 images:
   - "gcr.io/${_PROJECT_ID}/${_SERVICE_NAME}"

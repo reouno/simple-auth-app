@@ -1,9 +1,12 @@
+import bodyParser from 'body-parser'
 import colors from 'vuetify/es5/util/colors'
 
 const dev = process.env.NODE_ENV !== 'production'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: true,
+  mode: 'universal',
   head: {
     titleTemplate: '%s - front',
     title: 'front',
@@ -23,7 +26,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['plugins/axios.ts'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -45,22 +48,24 @@ export default {
     '@nuxtjs/auth-next',
   ],
 
-  proxy: dev
-    ? {
-      '/api': {
-        target: 'http://localhost:8000',
-      },
-    }
-    : {},
+  serverMiddleware: [
+    bodyParser.json(),
+    { path: '/api', handler: '~/api/proxy.js' },
+  ],
+
+  // proxy: dev
+  //   ? {
+  //     '/api': {
+  //       target: 'http://localhost:8000',
+  //     },
+  //   }
+  //   : {},
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: dev
-    ? {
-      baseURL: 'http://localhost:8000',
-      credentials: true,
-    }
+    ? {}
     : {
-      baseURL: process.env.NUXT_ENV_BASE_URL,
+      baseURL: process.env.NUXT_ENV_HOST_URL,
       credentials: true,
     },
 

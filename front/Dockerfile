@@ -1,6 +1,7 @@
 FROM node:14
 
 ARG BASE_URL
+ARG HOST_URL
 
 WORKDIR /usr/src/app
 
@@ -12,6 +13,11 @@ EXPOSE 8080
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-RUN NUXT_ENV_BASE_URL=${BASE_URL} yarn build
+# For runtime
+ENV NUXT_ENV_BASE_URL=${BASE_URL}
+ENV NUXT_ENV_HOST_URL=${HOST_URL}
+
+# For build
+RUN NUXT_ENV_BASE_URL=${BASE_URL} NUXT_ENV_HOST_URL=${HOST_URL} yarn build
 
 CMD [ "yarn", "start" ]

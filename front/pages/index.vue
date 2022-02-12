@@ -71,13 +71,16 @@ export default class Index extends Vue {
     first_name: '',
     last_name: '',
   }
+  isSessionAuth: boolean = true
 
   baseEndpoint = '/api/custom_accounts'
   tokenEndpoint = '/api/token'
 
   async created() {
-    await this.$axios.get(`${this.baseEndpoint}/set-csrf/`)
-    await this.getUserData()
+    if (process.client) {
+      await this.$axios.get(`${this.baseEndpoint}/set-csrf/`)
+      await this.getUserData()
+    }
   }
 
   login() {
@@ -101,6 +104,7 @@ export default class Index extends Vue {
   }
 
   async getJwtTokensFromServer() {
+    this.isSessionAuth = false
     await this.$axios.post(`${this.tokenEndpoint}/`, {
       user_id: this.email,
       password: this.password,
@@ -115,9 +119,10 @@ export default class Index extends Vue {
   }
 
   getUserData() {
+    const headers = this.isSessionAuth ? {} : this.headers()
     this.$axios.get(
       `${this.baseEndpoint}/current/`,
-      { headers: this.headers() }
+      { headers }
     ).then((response) => {
       this.updateUserData(response.data)
     }).catch((reason) => {
@@ -126,11 +131,12 @@ export default class Index extends Vue {
   }
 
   update() {
+    const headers = this.isSessionAuth ? {} : this.headers()
     this.$axios.patch(
       `${this.baseEndpoint}/current/`,
       this.editableFields,
       {
-        headers: this.headers()
+        headers
       }
     ).then((response) => {
       this.updateUserData(response.data)

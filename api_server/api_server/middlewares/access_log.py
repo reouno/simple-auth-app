@@ -11,9 +11,9 @@ class RequestDebugMiddleware:
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
-        logger.info(f'Cookies: {request.COOKIES}')
-        logger.info(f'Headers: {request.headers}')
-        logger.info(f'META: {request.META}')
+        # logger.info(f'Cookies: {request.COOKIES}')
+        # logger.info(f'Headers: {request.headers}')
+        # logger.info(f'META: {request.META}')
 
         response = self.get_response(request)
 

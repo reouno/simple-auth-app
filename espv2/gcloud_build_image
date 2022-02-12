@@ -111,7 +111,7 @@ COPY service.json \${ENDPOINTS_SERVICE_PATH}
 RUN chown -R envoy:envoy \${ENDPOINTS_SERVICE_PATH} && chmod -R 755 \${ENDPOINTS_SERVICE_PATH}
 USER envoy
 
-ENV ESPv2_ARGS ^++^--cors_preset=basic++--cors_allow_origin="https://front-simple-auth-app-dev-4r4bp3qvaq-an.a.run.app"++--cors_allow_credentials
+ENV ESPv2_ARGS ^++^--cors_preset=basic++--cors_allow_origin="https://front-simple-auth-app-dev-4r4bp3qvaq-an.a.run.app"++--cors_allow_credentials++--cors_allow_headers="DNT,User-Agent,X-User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,X-CSRFToken"
 
 ENTRYPOINT ["/env_start_proxy.py"]
 EOF
