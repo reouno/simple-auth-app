@@ -47,9 +47,19 @@ INSTALLED_APPS = [
 
     # 3rd party apps
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'corsheaders',
     'drf_spectacular',
+    'dj_rest_auth',
+
+    # For dj-rest-auth registration
+    # ref: https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
 
     # Django apps
     'django.contrib.admin',
@@ -59,6 +69,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'api_server.middlewares.access_log.RequestDebugMiddleware',
@@ -101,6 +113,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# For django-allauth
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
 
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'user_id',
