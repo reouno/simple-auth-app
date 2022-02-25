@@ -48,8 +48,64 @@ export default {
     '@nuxtjs/auth-next',
   ],
 
+  // All route need auth by default
+  router: {
+    middleware: ['auth'],
+  },
+
+  // for nuxt-auth-module
+  auth: {
+    token: {
+      prefix: '_token.',
+      global: true,
+    },
+    localStorage: false,
+    cookie: {
+      prefix: 'auth.',
+      options: {
+        path: '/',
+        secure: true,
+      },
+    },
+    redirect: {
+      login: '/login',
+      logout: '/logged-out',
+      callback: '/login',
+      home: '/',
+    },
+    strategies: {
+      cookie: {
+        cookie: {
+          // name: 'sessionid',
+        },
+        user: {
+          property: '',
+        },
+        endpoints: {
+          csrf: { url: '/api/custom_accounts/set-csrf/', method: 'get'},
+          login: { url: '/api/custom_accounts/login/', method: 'post' },
+          logout: { url: '/api/custom_accounts/logout/', method: 'post' },
+          user: { url: '/api/custom_accounts/current/', method: 'get' },
+        },
+      },
+      google: {
+        clientId: process.env.NUXT_ENV_GOOGLE_AUTH_CLIENT_ID,
+        codeChallengeMethod: '',
+        scope: ['profile', 'email'],
+        responseType: 'code',
+        grantType: 'authorization_code',
+        accessType: 'offline',
+        endpoints: {
+          token: '/api/dj-rest-auth/google/',
+          userInfo: '/api/custom_accounts/current/',
+        },
+      },
+    },
+  },
+
   serverMiddleware: [
     bodyParser.json(),
+    bodyParser.urlencoded(),
     { path: '/api', handler: '~/api/proxy.js' },
   ],
 

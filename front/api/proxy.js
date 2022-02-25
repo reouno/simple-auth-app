@@ -1,13 +1,23 @@
 import axios from 'axios'
 
+// const url = require('url')
+
 export default function (req, res, next) {
   console.log(JSON.stringify({
-    a: 'クライアントからのリクエスト',
+    a: 'クライアントからのリクエスト2',
     url: req.url,
     originalUrl: req.originalUrl,
     method: req.method,
-    headers: req.headers,
+    // headers: req.headers,
+    query: req.query,
+    params: req.params,
     body: req.body,
+    rawBody: req.rawBody,
+    raws: req.raws,
+    form: req.form,
+    data: req.data,
+    file: req.file,
+    formData: req.formData,
   }))
 
   // Accept only request from the valid origin.
@@ -19,13 +29,6 @@ export default function (req, res, next) {
     res.writeHead(404).end()
   }
 
-  // replace x-forwarded-for if exists as it too long
-  // if (req.headers['x-forwarded-for']) {
-  //   req.headers['x-forwarded-for'] = 'replaced by frontend node proxy'
-  // }
-  // if (req.headers['forwarded']) {
-  //   req.headers['forwarded'] = 'replaced by frontend node proxy'
-  // }
   const headers = {
     'accept': req.headers['accept'],
     'accept-encoding': req.headers['accept-encoding'],
@@ -43,60 +46,50 @@ export default function (req, res, next) {
     // 'sec-ch-ua-mobile': req.headers['sec-ch-ua-mobile'],
   }
   const headers_ = Object.keys(headers)
-    .filter( function(ObjectKey){
+    .filter(function (ObjectKey) {
       return headers[ObjectKey] !== undefined && headers[ObjectKey] !== null
-    } )
-    .reduce( function (result, ObjectKey){
+    })
+    .reduce(function (result, ObjectKey) {
       result[ObjectKey] = headers[ObjectKey];
       return result;
-    }, {} )
-  // const headers = ResponseInit.headers
-  // headers['accept'] = req.headers['accept']
-  // headers['content-type'] = req.headers['content-type']
-  // headers['cookie'] = req.headers['cookie']
-  // headers['x-csrftoken'] = req.headers['x-csrftoken']
-  // headers['authorization'] = req.headers['authorization']
+    }, {})
 
   const apiHost = process.env.NUXT_ENV_BASE_URL || 'htttp://localhost:8000'
   const url = apiHost + req.originalUrl
-  const data = Object.keys(req.body).length ? req.body : undefined
-  console.log(JSON.stringify({
-    a: 'APIサーバーへリクエスト',
-    url,
-    headers,
-    data,
-  }))
-
-  axios({
+  // const data = Object.keys(req.body).length ? req.body : undefined
+  let request = {
     method: req.method,
     url,
     headers: headers_,
-    // headers: {
-    //   'accept': req.headers['accept'],
-    //   'content-type': req.headers['content-type'],
-    //   'cookie': req.headers['cookie'],
-    // },
-    // headers: {
-    //   "host":"localhost:3000",
-    //   "connection":"keep-alive",
-    //   "pragma":"no-cache",
-    //   "cache-control":"no-cache",
-    //   "sec-ch-ua":"\" Not;A Brand\";v=\"99\", \"Google Chrome\";v=\"97\", \"Chromium\";v=\"97\"",
-    //   "accept":"application/json, text/plain, */*",
-    //   "x-csrftoken":"OyjMItLKShOlUgRzj5sknrLkyVklIjzzAnBAUCV5duxxV1cJu1Kmh0yFVgys03jG",
-    //   "sec-ch-ua-mobile":"?0",
-    //   "user-agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36",
-    //   "sec-ch-ua-platform":"\"macOS\"",
-    //   "sec-fetch-site":"same-origin",
-    //   "sec-fetch-mode":"cors",
-    //   "sec-fetch-dest":"empty",
-    //   "referer":"http://localhost:3000/",
-    //   "accept-encoding":"gzip, deflate, br",
-    //   "accept-language":"en-US,en;q=0.9,ja;q=0.8",
-    //   "cookie":"auth.redirect=%2Finstructor; auth._token_expiration.cookie=false; auth._token.cookie=true; vuex={%22example%22:{}%2C%22toggle-drawer%22:{%22_value%22:true}}; auth.strategy=; csrftoken=OyjMItLKShOlUgRzj5sknrLkyVklIjzzAnBAUCV5duxxV1cJu1Kmh0yFVgys03jG"
-    // },
-    data,
-  }).then(originalRes => {
+  }
+
+  if (request.headers['content-type'] === 'application/json') {
+    request = {
+      ...request,
+      data: req.body,
+    }
+  } else if (request.headers['content-type'] === 'application/x-www-form-urlencoded') {
+    let params = new URLSearchParams()
+    for (const [key, value] of Object.entries(req.body)) {
+      params.append(key, value)
+    }
+    console.log('フォームデータをURLSearchParamsとして追加')
+    request = {
+      ...request,
+      data: params.toString(),
+    }
+  }
+
+  console.log(JSON.stringify({
+    a: 'APIサーバーへリクエスト',
+    url: request.url,
+    method: request.method,
+    headers: request.headers,
+    data: request.data,
+    params: request.params,
+  }))
+
+  axios(request).then(originalRes => {
     console.log(JSON.stringify({
       a: 'オリジナルレスポンス',
       headers: originalRes.headers,

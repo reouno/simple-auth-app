@@ -18,6 +18,8 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
+from api_server.custom_dj_rest_auth.views import GoogleLogin
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/custom_accounts/',
@@ -36,5 +38,8 @@ urlpatterns = [
 
     # Use dj-rest-auth
     path('api/dj-rest-auth/', include('dj_rest_auth.urls')),
-    path('api/dj-rest-auth/registration/', include('dj_rest_auth.registration.urls'))
+
+    # Use dj-rest-auth and allauth
+    path('api/dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('api/dj-rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
 ]

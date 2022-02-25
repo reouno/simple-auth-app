@@ -58,8 +58,13 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
     'dj_rest_auth.registration',
+
+    # For social auth
+    # ref:
+    # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#social-authentication-optional
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
     # Django apps
     'django.contrib.admin',
@@ -102,6 +107,14 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 WSGI_APPLICATION = 'api_server.wsgi.application'
 
 AUTH_USER_MODEL = 'custom_accounts.CustomUser'
@@ -116,6 +129,20 @@ REST_FRAMEWORK = {
 
 # For django-allauth
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [ 'profile', 'email' ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    },
+}
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+REST_USE_JWT = True
+
+# For Google login
+GOOGLE_AUTH_CALLBACK_URL = os.environ.get('GOOGLE_AUTH_CALLBACK_URL', 'http://localhost:3000/login')
 
 SIMPLE_JWT = {
     'USER_ID_FIELD': 'user_id',
