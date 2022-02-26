@@ -129,9 +129,10 @@ REST_FRAMEWORK = {
 
 # For django-allauth
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'user_id'
+SOCIALACCOUNT_ADAPTER = 'api_server.custom_allauth.adapter.CustomSocialAccountAdapter'
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': [ 'profile', 'email' ],
+        'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
